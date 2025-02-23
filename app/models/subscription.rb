@@ -40,6 +40,8 @@ class Subscription < ApplicationRecord
       save!
     end
 
+    PaymentProviderNotificationService.(self)
+
     true
 
   # This is to catch failed transactions.
