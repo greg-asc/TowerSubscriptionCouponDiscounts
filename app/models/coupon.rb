@@ -1,6 +1,6 @@
 class Coupon < ApplicationRecord
   # The subscriptions the coupon is applied to.
-  has_many :subscriptions, dependent: :restrict_with_error
+  has_many :subscriptions
 
 
   # Coupon code, e.g. SAVE10
