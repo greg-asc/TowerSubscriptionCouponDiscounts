@@ -36,9 +36,16 @@ RSpec.describe Subscription, type: :model do
   end
 
   describe '#apply_coupon' do
-    let(:plan) { create(:plan, unit_price: 20.00) }
-    let(:coupon) { create(:coupon, percentage_discount: 25.00, max_charges: 2) }
-    let(:subscription) { create(:subscription, plan: plan, unit_price: 20.00) }
+    let(:plan)            { create(:plan, unit_price: 20.00) }
+    let(:coupon)          { create(:coupon, percentage_discount: 25.00, max_charges: 2) }
+    let(:subscription_id) { '126218b5-d335-4918-88ee-23fb4f0bacdd' }
+    let(:subscription)    { create(:subscription, plan: plan, unit_price: 20.00, external_id: subscription_id) }
+
+    before :each do
+      WebMock.stub_request(:post, "https://payment-provider.com/subscriptions/#{subscription_id}")
+        .with { |request| true }
+        .to_return(status: 200, body: '', headers: {})
+    end
 
     it 'applies the coupon and updates effective_price' do
       expect(subscription.apply_coupon(coupon)).to be true
@@ -68,9 +75,17 @@ RSpec.describe Subscription, type: :model do
   end
 
   describe '#remove_coupon' do
-    let(:plan) { create(:plan, unit_price: 20.00) }
-    let(:coupon) { create(:coupon, percentage_discount: 25.00, max_charges: 2) }
-    let(:subscription) { create(:subscription, plan: plan, unit_price: 20.00) }
+    let(:plan)            { create(:plan, unit_price: 20.00) }
+    let(:coupon)          { create(:coupon, percentage_discount: 25.00, max_charges: 2) }
+    let(:subscription_id) { '126218b5-d335-4918-88ee-23fb4f0bacdd' }
+    let(:subscription)    { create(:subscription, plan: plan, unit_price: 20.00, external_id: subscription_id) }
+
+    before :each do
+      WebMock.stub_request(:post, "https://payment-provider.com/subscriptions/#{subscription_id}")
+        .with { |request| true }
+        .to_return(status: 200, body: '', headers: {})
+    end
+
 
     it 'removes the coupon and resets effective_price' do
       subscription.apply_coupon(coupon)

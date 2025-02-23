@@ -56,8 +56,15 @@ RSpec.describe Coupon, type: :model do
   end
 
   describe 'immutability' do
-    let(:coupon) { create(:coupon) }
-    let(:subscription) { create(:subscription) }
+    let(:coupon)          { create(:coupon) }
+    let(:subscription_id) { '126218b5-d335-4918-88ee-23fb4f0bacdd' }
+    let(:subscription)    { create(:subscription, external_id: subscription_id) }
+
+    before :each do
+      WebMock.stub_request(:post, "https://payment-provider.com/subscriptions/#{subscription_id}")
+        .with { |request| true }
+        .to_return(status: 200, body: '', headers: {})
+    end
 
     it 'prevents updates if applied to a subscription' do
       subscription.apply_coupon(coupon)
