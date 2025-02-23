@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  external_id: 
+  seats: 1
+  unit_price: 9.99
+  plan: one
+
+two:
+  external_id: 
+  seats: 1
+  unit_price: 9.99
+  plan: two
