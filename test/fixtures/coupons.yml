@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  code: MyString
+  max_charges: 1
+  charges_used: 1
+  percentage_discount: 9.99
+
+two:
+  code: MyString
+  max_charges: 1
+  charges_used: 1
+  percentage_discount: 9.99

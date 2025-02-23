@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_23_134733) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_23_141951) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "coupons", force: :cascade do |t|
+    t.string "code", null: false
+    t.integer "max_charges", null: false
+    t.integer "charges_used", default: 0, null: false
+    t.decimal "percentage_discount", precision: 5, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "plans", force: :cascade do |t|
     t.string "title"
@@ -23,8 +33,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_23_134733) do
 
   create_table "subscriptions", force: :cascade do |t|
     t.uuid "external_id", default: -> { "gen_random_uuid()" }, null: false
-    t.integer "seats"
-    t.decimal "unit_price", precision: 10, scale: 2
+    t.integer "seats", null: false
+    t.decimal "unit_price", precision: 10, scale: 2, null: false
+    t.decimal "effective_price", precision: 10, scale: 2, null: false
     t.bigint "plan_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
