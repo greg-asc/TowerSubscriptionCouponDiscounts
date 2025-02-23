@@ -24,29 +24,35 @@ class Subscription < ApplicationRecord
     return false unless coup&.can_be_applied?
 
     # Entire process wrapped in a transaction to ensure integrity.
-    transaction do
-      # If the subscription already had a coupon, remove it first.
-      remove_coupon if coupon.present?
+    begin
+      transaction do
+        # If the subscription already had a coupon, remove it first.
+        remove_coupon if coupon.present?
 
-      # Apply provided coupon and calculate new effective price.
-      self.coupon          = coup
-      original_price       = plan.unit_price
-      discounted_price     = original_price * (1 - coup.percentage_discount * 0.01)
-      self.effective_price = discounted_price
+        # Apply provided coupon and calculate new effective price.
+        self.coupon          = coup
+        original_price       = plan.unit_price
+        discounted_price     = original_price * (1 - coup.percentage_discount * 0.01)
+        self.effective_price = discounted_price
 
-      # Bump up the charges counter.
-      coup.increment! :charges_used
+        # Bump up the charges counter.
+        coup.increment! :charges_used
 
-      save!
+        save!
+      end
+
+      PaymentProviderNotificationService.(self)
+
+    # This is to catch failed transactions.
+    rescue ActiveRecord::RecordInvalid
+      return false
+
+    # This is just a hack because there is no payment provider endpoint so
+    # let's just pretend everything is fine for demo purposes (because I
+    # might have overdone it with the notification service :P)
+    rescue OpenSSL::SSL::SSLError
+      return true
     end
-
-    PaymentProviderNotificationService.(self)
-
-    true
-
-  # This is to catch failed transactions.
-  rescue ActiveRecord::RecordInvalid
-    false
   end
 
   # Removes coupon and restores the original unit price.

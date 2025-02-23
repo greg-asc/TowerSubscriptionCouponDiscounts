@@ -61,7 +61,7 @@ RSpec.describe Coupon, type: :model do
     let(:subscription)    { create(:subscription, external_id: subscription_id) }
 
     before :each do
-      WebMock.stub_request(:post, "https://payment-provider.com/subscriptions/#{subscription_id}")
+      WebMock.stub_request(:post, "https://payment-provider.com/api/v1/subscriptions/#{subscription_id}")
         .with { |request| true }
         .to_return(status: 200, body: '', headers: {})
     end
