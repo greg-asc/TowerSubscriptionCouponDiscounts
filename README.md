@@ -112,7 +112,7 @@ output:
 
 ## API Integration
 
-The app attempts to simulate an real-world integration with a payment provider
+The app attempts to simulate a real-world integration with a payment provider
 to update subscription prices whenever the effective price changes, e.g. when a
 coupon is applied or removed. The integration uses HTTParty to make the POST request
 
@@ -127,7 +127,9 @@ the payment provider's side.
 
 The tests use WebMock to intercept requests from
 `PaymentProviderNotificationService` and imitate a real API endpoint responding
-with HTTP 200 (see `spec/models/subscription_spec.rb:45` for example).
+with HTTP 200 (see `spec/models/subscription_spec.rb:45` for example).  In
+`Subscription#apply_coupon`, I rescue from `OpenSSL::SSL::SSLError` only to
+make the demo usable in the interactive console.
 
 
 ## Key Implementation Details and Decisions
@@ -144,7 +146,7 @@ unit price.
 
 #### `unit_price` - `Subscription` vs `Plan`
 Additionally, I was unable to fully understand the difference between
-`unit_price` in `Subscription` vs `Plan` so for the purpose of this task I
+`unit_price` in `Subscription` and in `Plan` so for the purpose of this task I
 simply assumed that it gets passed on from `Plan` to `Subscription` but I
 implemented everything is such a way that a more sophisticated behaviour could
 be supported if needed.
